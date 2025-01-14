@@ -8,7 +8,6 @@ httpcore==1.0.7
 httpx==0.28.1
 idna==3.10
 oauthlib==3.2.2
-pygame==2.6.1
 pypiwin32==223
 pywin32==308
 repath==0.9.0
