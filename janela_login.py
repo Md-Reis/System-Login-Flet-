@@ -2,10 +2,11 @@ import sqlite3
 import flet as ft
 import win32com.client as win32
 import re
-import pygame
 
 from flet import *
 from time import sleep
+
+global local, bd
 
 local = './data_base/' #Pasta do Banco de Dados
 bd = 'BD.db' #Nome do Banco de Dados
@@ -58,17 +59,19 @@ class Back_End(DataBase):
             self.cadastra_usuario()
         else:
             self.email_recuperação()
-    def sounds(audio): #Biblioteca para reproduzir os som (PyGame)
-        pygame.mixer.init()
-        if audio_on:
+    def sounds(audio, page): #Função para reproduzir audio
+        if audio_on == True:
             def play_sound():
-                pygame.mixer.Sound(audio).play()
+                play = ft.Audio(src=audio, autoplay=True)
+                page.overlay.append(play)
+                page.update()
             return play_sound()
         else:
-            pygame.mixer.stop()
+            page.overlay.clear()
+            page.update()
     def valida_usuario(self): #Validação de usuario através do Bando de Dados do SQlite3
         if audio_on:
-            Back_End.sounds("./sounds/cg.mp3")
+            Back_End.sounds("./sounds/cg.mp3", self.tela)
         if self.id_user.value == '':
             self.alerta.visible = True
             self.alerta.value = 'Insira o ID do usuario'
@@ -322,8 +325,11 @@ class Front_End():
         page.vertical_alignment = 'center'
         page.padding = 0
         
+        def start():
+            Back_End.sounds("./sounds/gm.mp3", page)
+            
         def page_init(page): #Pagina inicial da aplicação
-            Back_End.sounds("./sounds/cg.mp3")
+            Back_End.sounds("./sounds/cg.mp3", page)
             
             #Chama o Back End para validar as informações de Login
             def call_back_end_init(e):
@@ -335,7 +341,7 @@ class Front_End():
                 global audio_on
                 if soundeffect.visible == True:
                     audio_on = False
-                    Back_End.sounds("./sounds/gm.mp3")
+                    page.overlay.clear()
                     soundeffect.visible = False
                     page.update()
                 else:
@@ -506,8 +512,7 @@ class Front_End():
             page.add(body_init)
         
         def page_register(page): #Pagina de cadastro de usuarios
-            Back_End.sounds("./sounds/cg.mp3")
-            
+            Back_End.sounds("./sounds/cg.mp3", page)
             #Chama o Back End para registrar novo usuaio
             def call_back_end_new(e):
                 if not format_email(email.value):
@@ -710,7 +715,7 @@ class Front_End():
             page.add(body_new_user)  
     
         def page_recover(page): #Pagina de recuperação de senha
-            Back_End.sounds("./sounds/cg.mp3")
+            Back_End.sounds("./sounds/cg.mp3", page)
             
             #Chama o Back End para recuperar a senha por email
             def call_back_end_recover(e):
@@ -808,8 +813,8 @@ class Front_End():
             page.add(body_recover)  
     
         page_init(page)
-    sleep(1)
-    Back_End.sounds("./sounds/gm.mp3")        
+        sleep(1)
+        start()
     app(target=main)
 
 Front_End()
