@@ -41,7 +41,6 @@ O sistema conta com um visual realista, tornando a experiencia do usuario fascin
 - sqlite3
 - flet
 - re
-- pygame
 - time
 
 Para contribuir, siga os passos acima e envie um pull request! 
